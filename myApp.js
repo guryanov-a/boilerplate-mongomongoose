@@ -1,6 +1,14 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 
+const standardResultCallback = (done) => (err, data) => {
+  if (err) {
+    return done(err);
+  }
+
+  done(null, data);
+};
+
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true });
 
 const personSchema = new mongoose.Schema({
@@ -18,47 +26,23 @@ const createAndSavePerson = (done) => {
     favoriteFoods: ['vegetables']
   });
 
-  person.save(function(err, data) {
-    if (err) {
-      return done(err);
-    }
-
-    done(null, data);
-  });
+  person.save(standardResultCallback(done));
 };
 
 const createManyPeople = (arrayOfPeople, done) => {
-  Person.create(arrayOfPeople, function(err, data) {
-    if (err) {
-      return done(err);
-    }
-
-    done(null, data);
-  });
+  Person.create(arrayOfPeople, standardResultCallback(done));
 };
 
 const findPeopleByName = (personName, done) => {
-  Person.find({ name: personName }, function(err, data) {
-    if (err) {
-      return done(err);
-    }
-
-    done(null, data);
-  });
+  Person.find({ name: personName }, standardResultCallback(done));
 };
 
 const findOneByFood = (food, done) => {
-  Person.findOne({ favoriteFoods: food }, function(err, data) {
-    if (err) {
-      return done(err);
-    }
-
-    done(null, data);
-  });
+  Person.findOne({ favoriteFoods: food }, standardResultCallback(done));
 };
 
 const findPersonById = (personId, done) => {
-  done(null /*, data*/);
+  Person.findById(personId, standardResultCallback(done));
 };
 
 const findEditThenSave = (personId, done) => {
