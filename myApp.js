@@ -42,13 +42,31 @@ const findOneByFood = (food, done) => {
 };
 
 const findPersonById = (personId, done) => {
-  Person.findById(personId, standardResultCallback(done));
+  return Person.findById(personId, standardResultCallback(done));
 };
 
-const findEditThenSave = (personId, done) => {
-  const foodToAdd = "hamburger";
+const foodToAdd = "hamburger";
 
-  done(null /*, data*/);
+const findEditThenSave = async (personId, done) => {
+  let person;
+
+  try {
+    person = await Person.findById(personId);
+  } catch (err) {
+    done(err);
+    return;
+  }
+
+  person.favoriteFoods.push(foodToAdd);
+
+  try {
+    await person.save();
+  } catch (err) {
+    done(err);
+    return;
+  };
+
+  done(null, person);
 };
 
 const findAndUpdate = (personName, done) => {
