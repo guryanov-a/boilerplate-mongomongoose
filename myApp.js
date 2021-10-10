@@ -69,10 +69,23 @@ const findEditThenSave = async (personId, done) => {
   done(null, person);
 };
 
-const findAndUpdate = (personName, done) => {
-  const ageToSet = 20;
+const ageToSet = 20;
 
-  done(null /*, data*/);
+const findAndUpdate = async (personName, done) => {
+  let person;
+
+  try {
+    person = await Person.findOneAndUpdate(
+      { name: personName }, 
+      { age: ageToSet }, 
+      { new: true }
+    );
+  } catch (err) {
+    done(err);
+    return;
+  }
+  
+  done(null, person);
 };
 
 const removeById = (personId, done) => {
